@@ -5,13 +5,28 @@ const middleware = require('../middleware');
 
 // INDEX - Show all campgrounds
 router.get("/", (req, res) => {
-    Campground.find({}, (err, allCampgrounds) => {
-        if(err) {
-            console.log(err);
-        } else {
-            res.render("campgrounds/index", {campgrounds: allCampgrounds, currentUser: req.user});
-        }
-    });
+    let noResults;
+    if(req.query.search) {
+        const regex = new RegExp(searchRegex(req.query.search), 'gi');
+        Campground.find({name: regex}, (err, allCampgrounds) => {
+            if(err) {
+                console.log(err);
+            } else {
+                if(allCampgrounds.length < 1) {
+                    noResults = 'Sorry, no campgrounds match that query.';
+                }
+                res.render("campgrounds/index", {campgrounds: allCampgrounds, currentUser: req.user, noResults: noResults});
+            }
+        });
+    } else {
+        Campground.find({}, (err, allCampgrounds) => {
+            if(err) {
+                console.log(err);
+            } else {
+                res.render("campgrounds/index", {campgrounds: allCampgrounds, currentUser: req.user, noResults: noResults});
+            }
+        });
+    }
 });
 
 // CREATE - add new campground
@@ -91,5 +106,9 @@ router.delete("/:id", middleware.checkCampgroundUserAccess, (req, res) => {
         }
     });
 });
+
+function searchRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 
 module.exports = router;
