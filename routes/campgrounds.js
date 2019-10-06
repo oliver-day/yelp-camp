@@ -60,7 +60,7 @@ router.get("/:id", (req, res) => {
 });
 
 // Edit - campground
-router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
+router.get("/:id/edit", middleware.checkCampgroundUserAccess, (req, res) => {
     Campground.findById(req.params.id, (err, foundCampground) => {
         res.render("campgrounds/edit", {campground: foundCampground});
             
@@ -68,7 +68,7 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 });
 
 // Update - campground
-router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
+router.put("/:id", middleware.checkCampgroundUserAccess, (req, res) => {
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
         if(err) {
             req.flash("error", err.message);
@@ -81,7 +81,7 @@ router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
 });
 
 // Destroy - campground
-router.delete("/:id", middleware.checkCampgroundOwnership, (req, res) => {
+router.delete("/:id", middleware.checkCampgroundUserAccess, (req, res) => {
     Campground.findByIdAndDelete(req.params.id, (err) => {
         if(err) {
             req.flash("error", err.message);
