@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 3000;
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const passport = require('passport');
@@ -11,6 +10,9 @@ const Campground = require('./models/campground');
 const Comment = require('./models/comment');
 const User = require("./models/user");
 const seedDB = require('./seeds');
+
+require('dotenv').config();
+const port = process.env.PORT;
 
 // Requiring routes
 const campgroundRoutes = require('./routes/campgrounds');
